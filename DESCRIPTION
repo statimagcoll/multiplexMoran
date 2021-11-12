@@ -1,0 +1,19 @@
+Package: multiplexMoran
+Type: Package
+Title: Multivariate Moran Indices for Multiplexed Imaging data
+Version: 0.1.0
+Authors@R: person("Simon", "Vandekar", email="simon.vandekar@vumc.org", role=c('aut', 'cre') )
+Description: This package is designed to compute multivariate Moran-like indices for
+    multiplexed imaging data (e.g. immunofluorescence, immunohistochemistry, MIBI). 
+    Indices can be computed by slide and assume cell-level data.
+License: GPL-3
+LazyData: true
+Depends: R (>= 3.3)
+Collate:
+    'moran.R'
+Imports:
+    FNN,
+    Matrix,
+    spdep
+Encoding: UTF-8
+RoxygenNote: 7.1.1
