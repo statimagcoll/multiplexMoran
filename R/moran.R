@@ -52,7 +52,7 @@ moran = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=
 #' @return Returns a list of matrices, where each matrix is the multivariate Moran's I for each tissue compartment.
 #' @importFrom spdep lag.listw
 #' @export
-lisa = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=TRUE){
+lisa = function(y, x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=TRUE){
   x = as.matrix(cbind(y, x) )
   C = nrow(x)
   M = ncol(x)
