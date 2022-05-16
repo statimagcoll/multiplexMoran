@@ -7,11 +7,12 @@
 #' @param comp A vector of integers, strings, or factors indicating broad tissue compartments in which to compute Moran's I.
 #' @param zero.policy How to deal with zones without neighbors. If TRUE assign zero to the lagged value of zones without neighbours, if FALSE assign NA
 #' @param NAOK If TRUE, NAs are removed in computations.
+#' @param demean If TRUE demean columns of x. Might not want to if x is dummy variables.
 #'
 #' @return Returns a list of matrices, where each matrix is the multivariate Moran's I for each tissue compartment.
 #' @importFrom spdep lag.listw
 #' @export
-moran = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE){
+moran = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=TRUE){
   x = as.matrix(x)
   C = nrow(x)
   M = ncol(x)
@@ -19,8 +20,12 @@ moran = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE){
   n1 <- length(listw$neighbours)
   if (n1 != C)
     stop("objects of different length")
-  xx <- colMeans(x, na.rm = NAOK)
-  z <- sweep(x, 2, xx, '-')
+  if(demean){
+    xx <- colMeans(x, na.rm = NAOK)
+    z <- sweep(x, 2, xx, '-')
+  } else {
+    z <- x
+  }
   zz <- sqrt(colMeans(z^2, na.rm = NAOK))
   #K <- (length(x) * sum(z^4, na.rm = NAOK))/(zz^2)
   S0 = sum(lag.listw(listw, rep(1, C), zero.policy = zero.policy, NAOK = NAOK))
