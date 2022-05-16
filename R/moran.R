@@ -36,6 +36,46 @@ moran = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=
   res
 }
 
+#' Compute Moran's Local Index of Spatial Association (LISA) matrix
+#'
+#' This code was modified from the moran function above. LISA is directional and is the association centered around marker y.
+#' The column means of LISA are equal to Moran's I.
+#'
+#' @param y A vector to compute the index relative to.
+#' @param x A matrix of variables to compute the lisa with y.
+#' @param listw A listw object specifying the weighting matrix.
+#' @param comp A vector of integers, strings, or factors indicating broad tissue compartments in which to compute Moran's I.
+#' @param zero.policy How to deal with zones without neighbors. If TRUE assign zero to the lagged value of zones without neighbours, if FALSE assign NA
+#' @param NAOK If TRUE, NAs are removed in computations.
+#' @param demean If TRUE demean columns of x. Might not want to if x is dummy variables.
+#'
+#' @return Returns a list of matrices, where each matrix is the multivariate Moran's I for each tissue compartment.
+#' @importFrom spdep lag.listw
+#' @export
+lisa = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=TRUE){
+  x = as.matrix(cbind(y, x) )
+  C = nrow(x)
+  M = ncol(x)
+  stopifnot(is.logical(zero.policy))
+  n1 <- length(listw$neighbours)
+  if (n1 != C)
+    stop("objects of different length")
+  if(demean){
+    xx <- colMeans(x, na.rm = NAOK)
+    z <- sweep(x, 2, xx, '-')
+  } else {
+    z <- x
+  }
+  zz <- sqrt(colMeans(z^2, na.rm = NAOK))
+  #K <- (length(x) * sum(z^4, na.rm = NAOK))/(zz^2)
+  S0 = sum(lag.listw(listw, rep(1, C), zero.policy = zero.policy, NAOK = NAOK))
+  # apply to all columns of z
+  lz <- apply(z, 2, function(w) lag.listw(listw, w, zero.policy = zero.policy, NAOK = NAOK) )
+  # multiply each column of lz with z, scale out the variance, scale out the weights and sample, scale backup the sample
+  LISA <- sweep(sweep(lz, 1, z, '*'), 2, zz[1] * zz, '/' )/S0*C
+  LISA
+}
+
 
 #' Convert coordinates to a listw object
 #'
