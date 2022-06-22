@@ -31,7 +31,7 @@ moran = function(x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demean=
   S0 = sum(lag.listw(listw, rep(1, C), zero.policy = zero.policy, NAOK = NAOK))
   # apply to all columns of z
   lz <- apply(z, 2, function(w) lag.listw(listw, w, zero.policy = zero.policy, NAOK = NAOK) )
-  I <- crossprod(z, lz)/outer(zz, zz)/S0*C
+  I <- crossprod(z, lz)/outer(zz, zz)/S0
   res <- I
   res
 }
@@ -72,7 +72,7 @@ lisa = function(y, x, listw, comp=NULL, zero.policy = FALSE, NAOK = FALSE, demea
   # apply to all columns of z
   lz <- apply(z, 2, function(w) lag.listw(listw, w, zero.policy = zero.policy, NAOK = NAOK) )
   # multiply each column of lz with z, scale out the variance, scale out the weights and sample, scale backup the sample
-  LISA <- sweep(sweep(lz, 1, z[,1], '*'), 2, zz[1] * zz, '/' )/S0
+  LISA <- sweep(sweep(lz, 1, z[,1], '*'), 2, zz[1] * zz, '/' )/S0*C
   LISA
 }
 
